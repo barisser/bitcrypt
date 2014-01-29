@@ -459,11 +459,15 @@ if __name__ == '__main__':
 	elif GetFlag('-d'):
 		addv=int(GetArg('-v',0))
 		message=GetArg('-i')
-		private_key=GetArg('-k')
+		undecoded_private_key=GetArg('-k')
 
-		if len(private_key)==64:
-			private_key=private_key.decode('hex')
-		assert len(private_key)==32, 'Bad private key, you must give it in hexadecimal'
+		private_key = ''
+		if len(undecoded_private_key)==64:
+			private_key=undecoded_private_key.decode('hex') # try hex first
+		if len(private_key)!=32:
+			private_key=DecodeBase58Check(undecoded_private_key)[1:33] # try base58check next
+
+                assert len(private_key)==32, 'Bad private key, you must give it in hexadecimal, or base58check'
 
 		output=decrypt_message(private_key, message, verbose=True, generator=generatorBitcoin)
 
