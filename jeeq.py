@@ -430,7 +430,7 @@ if __name__ == '__main__':
 	if GetFlag('--generate-keys') or GetFlag('-g'):
 		v=int(GetArg('-v',0))
 		keys=generate_keys(addv=v)
-		print 'Private key:	      ', keys[0]
+		print 'Private key:              ', keys[0]
 		print 'Compressed public key:    ', keys[1]
 		print 'Uncompressed public key:  ', keys[2]
 		print 'Compressed address:       ', keys[3][0]
