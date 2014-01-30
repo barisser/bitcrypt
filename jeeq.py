@@ -404,7 +404,7 @@ def print_help(e=False):
 		exit(0)
 
 def generate_keys(curved=curveBitcoin, bitcoin=True, addv=0, G=generatorBitcoin):  #will return private key < 2^256
-	_r  = generator.order()
+	_r  = G.order()
 	rand = ( '%013x' % long(random.random() * 0xfffffffffffff) )*5
 	pvk  = (long(rand,16) >> 4)%_r
 	P = pvk*G
@@ -430,7 +430,7 @@ if __name__ == '__main__':
 	if GetFlag('--generate-keys') or GetFlag('-g'):
 		v=int(GetArg('-v',0))
 		keys=generate_keys(addv=v)
-		print 'Private key:              ', keys[0]
+		print 'Private key:	      ', keys[0]
 		print 'Compressed public key:    ', keys[1]
 		print 'Uncompressed public key:  ', keys[2]
 		print 'Compressed address:       ', keys[3][0]
@@ -467,7 +467,7 @@ if __name__ == '__main__':
 		if len(private_key)!=32:
 			private_key=DecodeBase58Check(undecoded_private_key)[1:33] # try base58check next
 
-                assert len(private_key)==32, 'Bad private key, you must give it in hexadecimal, or base58check'
+		assert len(private_key)==32, 'Bad private key, you must give it in hexadecimal, or base58check'
 
 		output=decrypt_message(private_key, message, verbose=True, generator=generatorBitcoin)
 
