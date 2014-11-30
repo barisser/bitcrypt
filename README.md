@@ -18,6 +18,11 @@ My goal is for cleartext communication channels to also be cryptographically sec
 I would like Bitcoin public addresses to represent identity in general.  Whatever you want to do, your public key
 should be your outward face.  
 
+###Dependencies
+- Jeeq ECDSA-encryption library.  See the repo link at bottom.  This file is included here.  It's just a single python file.
+
+- Vitalik's pybitcointools.  See the link at bottom.  Install this library locally.
+
 ###Example Usage
 
 import bitcrypt  
@@ -51,7 +56,7 @@ the full transactional history behind that address.
 
 
 ####Thanks to
-"jackjack" - https://github.com/jackjack-jj/jeeq
+"jackjack" - https://github.com/jackjack-jj/jeeq  
 Vitalik - https://github.com/vbuterin/pybitcointools
 
-####I leaned heavily on these libraries.  They did most of the real work.  
+#####I leaned heavily on these libraries.  They did the heavy lifting.
