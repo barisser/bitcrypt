@@ -41,7 +41,8 @@ def make_signature(sender_public_key, receiver_public_key, sender_secret_exponen
     answer['message'] = string
     return answer
 
-def write_message(secret_exponent_signer, public_key_sender, public_key_recipient, message_text):
+def write_message(secret_exponent_signer, public_key_recipient, message_text):
+    public_key_sender = pybitcointools.privkey_to_pubkey(secret_exponent_signer)
     message={}
     message['sender_public_key'] = secret_exponent_to_uncompressed_public_key(secret_exponent_signer)   #uncompressed
     message['sender_btc_address'] = hex_public_key_to_address(message['sender_public_key'])   #uncompressed
