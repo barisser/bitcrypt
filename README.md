@@ -19,7 +19,7 @@ I would like Bitcoin public addresses to represent identity in general.  Whateve
 should be your outward face.  
 
 ###Dependencies
-- Jeeq ECDSA-encryption library.  See the repo link at bottom.  This file is included here.  It's just a single python file.
+- Jeeq ECDSA-encryption library.  See the repo link at bottom.  This file is included here.  It's just a single python file.  I have retained his readme as readme_jeeq.
 
 - Vitalik's pybitcointools.  See the link at bottom.  Install this library locally.
 
