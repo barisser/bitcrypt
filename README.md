@@ -9,9 +9,39 @@ Write encrypted messages in the language of Bitcoin.
   - Only the holder of that address can decipher the message
 
 -- Send an encrypted message provably as the owner of a given Bitcoin address.
-  - You prove you own an address, while saying whatever you want, without losing any anonymity.
+  - You prove you own an address, while saying whatever you want, without losing anonymity.
 
--- Bitcoin ECDSA key generation has been linked with an implementation of asymmetric ECDSA-based encryption.  I'm relying heavily on the work of others (see below).
+###Highlights
+
+-- Diffie-Helman Key Exchange to create a secret shared key
+
+-- Symmetric Encryption with AES-CBC with the shared key for encrypted messaging
+
+-- Scrapes the public key for the receiving address from the Blockchain record.
+  This will not always yield a result.  Only addresses that have signed pay-to-pubkeyhash scripts will yield a public key.  Uses Blockchain.info for now; could use bitcoind directly if necessary.
+
+-- Encrypted time threshold to mitigate replay attacks.  
+
+
+###Present Status
+
+-- This is a prototype only.  This is not a finished product and should not be
+used for serious security.  
+
+-- Everything is unreviewed.  Please feel free to offer constructive feedback.
+
+-- There are some issues with padding that I would like feedback on.  I'm not sure what level of secure padding is necessary.
+
+-- Also the way in which I map the calculated shared secret point to a key for AES should be checked for any predictable weaknesses to outsiders.
+
+###Design Philosophy
+
+-- Use existing tools that are strong.  
+
+-- Rely on the most simplistic approach to minimize risks I'm not aware of.
+
+
+
 
 My goal is for cleartext communication channels to also be cryptographically secure and linked to financial tools built on Bitcoin.
 
@@ -19,33 +49,35 @@ I would like Bitcoin public addresses to represent identity in general.  Whateve
 should be your outward face.  
 
 ###Dependencies
-- Jeeq ECDSA-encryption library.  See the repo link at bottom.  This file is included here.  It's just a single python file.  I have retained his readme as readme_jeeq.
 
-- Vitalik's pybitcointools.  See the link at bottom.  Install this library locally.
+- PyCrypto.  I'm relying on this for AES encryption.
+
+- Vitalik's pybitcointools.  This is a helpful utility.
+
+- Richard Kiss's PyCoin library.  I'm only using this in converting private keys to secret exponents.  I was too lazy to do this myself.
+
+- It touches the Blockchain.info API for scraping public keys.  This is non-essential.  It's an ancillary utility.  Blockchain.info could be easily replaced with something pointing towards Bitcoind, or any other API.
+
+- For some of the Elliptic Curve operations, I've copied some code from https://gist.github.com/nlitsme/c9031c7b9bf6bb009e5a for convenience.  All that occurs here is Elliptic Curve addition, multiplication, etc.  This code does not originate any private keys; it is purely mechanical.  
 
 ###Example Usage
 
-import bitcrypt  
+>>> from bitcrypt import *
+>>> message = write_message_for_address('hi', '1EHNa6Q4Jz2uvNExL497mE43ikXhwF6kZm', '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAvUcVfH')
 
-sender_keys = bitcrypt.generate_keys()  
+(this is the public address corresponding with secret exponent = 1 and private key for secret exponent = 2)
 
-receiver_keys = bitcrypt.generate_keys()  
+>>> message
+{'ciphertext': 'n/9zUY0FfAYusbO5RhtP5meHztOuh5HM9PUG5YUqCWE=', 'point_x': 89565891926547004231252920425935692360644145829622209833684329913297188986597L, 'point_y': 12158399299693830322967808612713398636155367887041628176798871954788371653930L, 'iv': 'NnfufNoLc8OgcWYq'}
 
-sender_keys  
-{'compressed_public_key': '02871247985bf1ff81e822f2be4022630480c2d957bb5c4fa2a418851f76902d7b', 'secret_exponent': '125ba31a2526f125ba31a2526f125ba31a2526f125ba31a2526f125ba31a2526', 'compressed_btc_address': '1EgiYDeTh1y9wB1QVpby66mQfMHYBQ5VSD', 'uncompressed_btc_address': '1LUo6fpakNZPC41KPAYu9VufayF7RbQWws', 'uncompressed_public_key': '04871247985bf1ff81e822f2be4022630480c2d957bb5c4fa2a418851f76902d7b1e7399b45eff41657b3daffd461f984109645f8638e57b7f6ae4c06d6f94d6c0'}  
+(the x and y coordinates are the public key point for ME, ie, the public address corresponding to secret exponent = 2 )
 
-message = bitcrypt.write_message(sender_keys['secret_exponent'], receiver_keys['uncompressed_public_key'], 'hello crazy world')  
+>>> decrypted = decrypt_message(message, '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAnchuDf')
 
-message  
-{'ciphertext': 'amoAAAKyJAAyCDhdzEKzSiPwhHjPeyXa+KH4qKpJmcHCCGZ/yXo5RgMuxC2po1k6pRCEER+ZItJKICXhPkw711fZWhYig4F7uQ==', 'sender_signature': {'message': '04871247985bf1ff81e822f2be4022630480c2d957bb5c4fa2a418851f76902d7b1e7399b45eff41657b3daffd461f984109645f8638e57b7f6ae4c06d6f94d6c0 0453d2454662132c80c97559114d9f2cd9036e77bc7537c1be2b4cc06441ba52a5c5a5d463e6e5e06d9a0925f356e172f79313339179949a9539cda121e7262af6 1417326232.34', 'signed': 'HFfK9srWKctKN9429r+4ubtc8DNctuepoZgUvp+k12nBQdbGVdSZ245c85iHv/ofHKSvXqNm/OBUcNyiKw1DXQ4='}, 'recipient_btc_address': '1JNQdqveVDzmKs7m22NY3bU69p4Auat6Te', 'sender_btc_address': '1LUo6fpakNZPC41KPAYu9VufayF7RbQWws', 'sender_public_key': '04871247985bf1ff81e822f2be4022630480c2d957bb5c4fa2a418851f76902d7b1e7399b45eff41657b3daffd461f984109645f8638e57b7f6ae4c06d6f94d6c0', 'recipient_public_key': '0453d2454662132c80c97559114d9f2cd9036e77bc7537c1be2b4cc06441ba52a5c5a5d463e6e5e06d9a0925f356e172f79313339179949a9539cda121e7262af6'}  
+(use the private key corresponding to the receiving address, ie, secret_exponent = 1)
 
-print bitcrypt.verify_message(message, receiver_keys['uncompressed_public_key'])  
-True  
-
-bitcrypt.read_message(message, receiver_keys['secret_exponent'], receiver_keys['uncompressed_public_key'])  
-[True, 'hello crazy world']
-
-
+>>> decrypted
+('hi              ', True)
 
 
 ####Things you could conceivably do with Bitcrypt
@@ -53,10 +85,6 @@ bitcrypt.read_message(message, receiver_keys['secret_exponent'], receiver_keys['
 -- Log into websites with encrypted messages
 -- Speak to financial counterparts as the cryptographically proven owner of certain financial assets.  Every message you write proves you own X bitcoins.  It also links you to
 the full transactional history behind that address.
+-- Control Devices on the Blockchain with encrypted commands
 
-
-####Thanks to
-"jackjack" - https://github.com/jackjack-jj/jeeq  
-Vitalik - https://github.com/vbuterin/pybitcointools
-
-#####I leaned heavily on these libraries.  They did the heavy lifting.
+##Example Usage
