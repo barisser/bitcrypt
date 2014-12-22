@@ -88,8 +88,8 @@ You can, of course, use a known pubkey directly instead of searching the Blockch
 ####Things you could conceivably do with Bitcrypt
 
 -- Log into websites with encrypted messages
+
 -- Speak to financial counterparts as the cryptographically proven owner of certain financial assets.  Every message you write proves you own X bitcoins.  It also links you to
 the full transactional history behind that address.
--- Control Devices on the Blockchain with encrypted commands
 
-##Example Usage
+-- Control Devices on the Blockchain with encrypted commands
