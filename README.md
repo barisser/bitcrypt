@@ -62,23 +62,25 @@ should be your outward face.
 
 ###Example Usage
 
->>> from bitcrypt import *
->>> message = write_message_for_address('hi', '1EHNa6Q4Jz2uvNExL497mE43ikXhwF6kZm', '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAvUcVfH')
+from bitcrypt import *
+message = write_message_for_address('hi', '1EHNa6Q4Jz2uvNExL497mE43ikXhwF6kZm', '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAvUcVfH')
 
 (this is the public address corresponding with secret exponent = 1 and private key for secret exponent = 2)
 
->>> message
+message
 {'ciphertext': 'n/9zUY0FfAYusbO5RhtP5meHztOuh5HM9PUG5YUqCWE=', 'point_x': 89565891926547004231252920425935692360644145829622209833684329913297188986597L, 'point_y': 12158399299693830322967808612713398636155367887041628176798871954788371653930L, 'iv': 'NnfufNoLc8OgcWYq'}
 
 (the x and y coordinates are the public key point for ME, ie, the public address corresponding to secret exponent = 2 )
 
->>> decrypted = decrypt_message(message, '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAnchuDf')
+decrypted = decrypt_message(message, '5HpHagT65TZzG1PH3CSu63k8DbpvD8s5ip4nEB3kEsreAnchuDf')
 
 (use the private key corresponding to the receiving address, ie, secret_exponent = 1)
 
->>> decrypted
+decrypted
 ('hi              ', True)
 
+
+You can, of course, use a known pubkey directly instead of searching the Blockchain with the key_scraping utility.  Just use assemble_message().
 
 ####Things you could conceivably do with Bitcrypt
 
