@@ -56,7 +56,7 @@ should be your outward face.
 
 - Richard Kiss's PyCoin library.  I'm only using this in converting private keys to secret exponents.  I was too lazy to do this myself.
 
-- It touches the Blockchain.info API for scraping public keys.  This is non-essential.  It's an ancillary utility.  Blockchain.info could be easily replaced with something pointing towards Bitcoind, or any other API.
+- It touches the Blockchain.info API for scraping public keys.  These public keys could be provided through some other route and the encryption schema would remain the same.
 
 - For some of the Elliptic Curve operations, I've copied some code from https://gist.github.com/nlitsme/c9031c7b9bf6bb009e5a for convenience.  All that occurs here is Elliptic Curve addition, multiplication, etc.  This code does not originate any private keys; it is purely mechanical.  
 
