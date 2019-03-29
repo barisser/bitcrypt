@@ -15,6 +15,7 @@ g= (Gx,Gy)
 
 time_threshold=1000
 
+
 def inverse(x, p):
     inv1 = 1
     inv2 = 0
@@ -23,6 +24,7 @@ def inverse(x, p):
         x, p = p, x % p
 
     return inv2
+
 
 def dblpt(pt, p):
     if pt is None:
@@ -38,6 +40,7 @@ def dblpt(pt, p):
     ysum= slope*(x-xsum)-y
     return (xsum%p, ysum%p)
 
+
 def addpt(p1,p2, p):
     if p1 is None or p2 is None:
         return None
@@ -52,6 +55,7 @@ def addpt(p1,p2, p):
     ysum= slope*(x1-xsum)-y1
     return (xsum%p, ysum%p)
 
+
 def ptmul(pt,a, p):
     scale= pt
     acc=None
@@ -65,12 +69,15 @@ def ptmul(pt,a, p):
         a >>= 1
     return acc
 
+
 def isoncurve(pt,p):
     (x,y)= pt
     return (y**2 - x**3 - 7)%p == 0
 
+
 def integer_to_point(n):
     return ptmul(g, n, p)
+
 
 def point_to_key(pt):
     x = str(hex(int(pt[0])))
@@ -78,21 +85,25 @@ def point_to_key(pt):
     public_key = '04' + x[2:len(x)-1] + y[2:len(y)-1]
     return public_key
 
+
 def key_to_point(public_key):
     public_key = str(public_key)[2:len(str(public_key))]
     x = int(public_key[0:64], 16)
     y = int(public_key[64:128], 16)
     return (x,y)
 
+
 def point_to_address(pt):
     public_key = point_to_key(pt)
     address = pybitcointools.pubkey_to_address(public_key)
     return address
 
+
 def integer_to_address(n):
     a=g
     a = ptmul(a, n, p)
     return point_to_address(a)
+
 
 def integer_to_string(n):
     c=''
@@ -102,15 +113,18 @@ def integer_to_string(n):
         c=c+chr(d)
     return c
 
+
 def create_common_key(received_pt, my_private_integer):
     new_point = ptmul(received_pt, my_private_integer, p)
     point_int = new_point[0]*new_point[1]
     point_string = base64.b64encode(integer_to_string(point_int))
     return point_string[0:32]
 
+
 def generate_IV():
     a=base64.b64encode(Random.new().read(100))  #uses pycrypto not random.  The IV is sent in cleartext anyway.
     return a[0:16]
+
 
 def encrypt(key, message, IV):
     mode = AES.MODE_CBC
@@ -121,11 +135,13 @@ def encrypt(key, message, IV):
     ciphertext = encryptor.encrypt(message)
     return base64.b64encode(ciphertext)
 
+
 def decrypt(key, ciphertext, IV):
     mode = AES.MODE_CBC
     decryptor = AES.new(key, mode, IV)
     plain = decryptor.decrypt(base64.b64decode(ciphertext))
     return plain
+
 
 def assemble_message_pubkey(text, pubkey, my_private_integer):
     message = {}
@@ -141,6 +157,7 @@ def assemble_message_pubkey(text, pubkey, my_private_integer):
     message['ciphertext'] = encrypt(key, text, iv)
     return message, True
 
+
 def assemble_message(text, their_pubkey, my_private_integer):
     message = {}
     their_point = key_to_point(their_pubkey)
@@ -153,6 +170,7 @@ def assemble_message(text, their_pubkey, my_private_integer):
     message['iv'] = iv
     message['ciphertext'] = encrypt(key, text, iv)
     return message
+
 
 def decrypt_message(message, my_private_key):
     my_private_integer = encoding.wif_to_secret_exponent(my_private_key)
@@ -169,6 +187,7 @@ def decrypt_message(message, my_private_key):
     else:
         print "message too late"
         return '', False
+
 
 def write_message_for_address(text, their_address, my_private_key):
     try:
