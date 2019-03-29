@@ -2,14 +2,17 @@ import requests
 import json
 import pybitcointools
 
+
 def get_address_info_blockchaininfo(public_address):
     api_url = 'https://blockchain.info/address/'+str(public_address)+'?format=json'
     addressdata = requests.get(api_url).content
     addressdata = json.loads(addressdata)
     return addressdata
 
+
 def get_txs_on_address(public_address):
     return get_address_info_blockchaininfo(public_address)['txs']
+
 
 def get_txs_from_address(public_address):
     txs = get_txs_on_address(public_address)
@@ -22,6 +25,7 @@ def get_txs_from_address(public_address):
                     if prev_addr == public_address:
                         out_txs.append(tx)
     return out_txs
+
 
 def get_pubkey_on_address(public_address):  #only sometimes works
     try:
