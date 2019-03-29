@@ -11,7 +11,7 @@ import util
 p = 2**256 - 2**32 - 977
 Gx=0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798
 Gy=0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8
-g= (Gx,Gy)
+g= (Gx, Gy)
 
 time_threshold=1000
 
@@ -27,32 +27,32 @@ def inverse(x, p):
 def dblpt(pt, p):
     if pt is None:
         return None
-    (x,y)= pt
+    (x, y)= pt
     if y==0:
         return None
 
     # Calculate 3*x^2/(2*y)  modulus p
-    slope= 3*pow(x,2,p)*inverse(2*y,p)
+    slope= 3*pow(x, 2, p)*inverse(2*y, p)
 
-    xsum= pow(slope,2,p)-2*x
+    xsum= pow(slope, 2, p)-2*x
     ysum= slope*(x-xsum)-y
     return (xsum%p, ysum%p)
 
-def addpt(p1,p2, p):
+def addpt(p1, p2, p):
     if p1 is None or p2 is None:
         return None
-    (x1,y1)= p1
-    (x2,y2)= p2
+    (x1, y1)= p1
+    (x2, y2)= p2
     if x1==x2:
         return dblpt(p1, p)
 
     # calculate (y1-y2)/(x1-x2)  modulus p
     slope=(y1-y2)*inverse(x1-x2, p)
-    xsum= pow(slope,2,p)-(x1+x2)
+    xsum= pow(slope, 2, p)-(x1+x2)
     ysum= slope*(x1-xsum)-y1
     return (xsum%p, ysum%p)
 
-def ptmul(pt,a, p):
+def ptmul(pt, a, p):
     scale= pt
     acc=None
     while a:
@@ -60,13 +60,13 @@ def ptmul(pt,a, p):
             if acc is None:
                 acc= scale
             else:
-                acc= addpt(acc,scale, p)
+                acc= addpt(acc, scale, p)
         scale= dblpt(scale, p)
         a >>= 1
     return acc
 
-def isoncurve(pt,p):
-    (x,y)= pt
+def isoncurve(pt, p):
+    (x, y)= pt
     return (y**2 - x**3 - 7)%p == 0
 
 def integer_to_point(n):
@@ -82,7 +82,7 @@ def key_to_point(public_key):
     public_key = str(public_key)[2:len(str(public_key))]
     x = int(public_key[0:64], 16)
     y = int(public_key[64:128], 16)
-    return (x,y)
+    return (x, y)
 
 def point_to_address(pt):
     public_key = point_to_key(pt)
